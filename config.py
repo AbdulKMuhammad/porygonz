@@ -82,6 +82,9 @@ class _FoulPlayConfig:
     log_to_file: bool
     stdout_log_handler: logging.StreamHandler
     file_log_handler: Optional[CustomRotatingFileHandler]
+    # LLM Configuration
+    use_llm: bool = False
+    llm_probability: float = 0.8
 
     def configure(self):
         parser = argparse.ArgumentParser()
@@ -151,6 +154,17 @@ class _FoulPlayConfig:
             action="store_true",
             help="When enabled, DEBUG logs will be written to a file in the logs/ directory",
         )
+        parser.add_argument(
+            "--use-llm",
+            action="store_true",
+            help="Use LLM (Llama 3.2-1B) for battle decisions instead of pure MCTS",
+        )
+        parser.add_argument(
+            "--llm-probability",
+            type=float,
+            default=0.8,
+            help="Probability of using LLM vs MCTS fallback (0.0-1.0). Default: 0.8",
+        )
 
         args = parser.parse_args()
         self.websocket_uri = args.websocket_uri
@@ -169,6 +183,8 @@ class _FoulPlayConfig:
         self.room_name = args.room_name
         self.log_level = args.log_level
         self.log_to_file = args.log_to_file
+        self.use_llm = args.use_llm
+        self.llm_probability = args.llm_probability
 
         self.validate_config()
 

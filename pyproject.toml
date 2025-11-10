@@ -1,0 +1,53 @@
+[project]
+name = "foul-play"
+version = "0.1.0"
+description = "A Pokémon battle-bot that can play battles on Pokemon Showdown"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0" }
+authors = [
+    { name = "pmariglia" }
+]
+
+dependencies = [
+    "requests==2.32.4",
+    "websockets==14.1",
+    "python-dateutil==2.8.0",
+    "poke-engine==0.0.46",
+    "llama-stack>=0.2.12",
+    "llama-models>=0.3.0",
+    "torch>=2.9.0",
+    "transformers>=4.44.0",
+    "accelerate>=0.34.0",
+    "sentencepiece>=0.2.0",
+    "llama-cpp-python>=0.3.0",
+    "ollama>=0.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.6.5",
+    "pytest==8.3.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["fp"]
+
+[tool.uv]
+# Configuration for poke-engine with custom build settings
+# Note: poke-engine requires Rust and custom build args for terastallization feature
+# Install with: uv pip install poke-engine --config-settings="build-args=--features poke-engine/terastallization --no-default-features"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"

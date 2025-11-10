@@ -7,6 +7,14 @@ dist/
 creds
 *.xlsx
 *.txt
+!pyproject.toml
 suspect_decisions.py
 teams/teams
 data/smogon_stats_cache
+
+# uv
+.venv/
+uv.lock
+.python-version
+ 
+.env

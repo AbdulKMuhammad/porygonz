@@ -671,6 +671,39 @@ class Pokemon:
             constants.SPEED: boost_multiplier_lookup[self.boosts[constants.SPEED]]
             * self.stats[constants.SPEED],
         }
+    
+    # Properties for LLM integration - expose stats and HP as direct attributes
+    @property
+    def hp_percent(self):
+        """Return HP as a percentage"""
+        if self.max_hp == 0:
+            return 0
+        return round(self.hp / self.max_hp * 100, 1)
+    
+    @property
+    def attack(self):
+        """Return attack stat"""
+        return self.stats.get(constants.ATTACK, 0)
+    
+    @property
+    def defense(self):
+        """Return defense stat"""
+        return self.stats.get(constants.DEFENSE, 0)
+    
+    @property
+    def special_attack(self):
+        """Return special attack stat"""
+        return self.stats.get(constants.SPECIAL_ATTACK, 0)
+    
+    @property
+    def special_defense(self):
+        """Return special defense stat"""
+        return self.stats.get(constants.SPECIAL_DEFENSE, 0)
+    
+    @property
+    def speed(self):
+        """Return speed stat"""
+        return self.stats.get(constants.SPEED, 0)
 
     @classmethod
     def extract_nickname_from_pokemonshowdown_string(cls, ps_string):
@@ -771,3 +804,16 @@ class Move:
 
     def __repr__(self):
         return "{}".format(self.name)
+    
+    # Properties for LLM integration - expose move data
+    @property
+    def base_power(self):
+        """Return move base power"""
+        move_data = all_move_json.get(self.name, {})
+        return move_data.get("basePower", 0)
+    
+    @property
+    def type(self):
+        """Return move type"""
+        move_data = all_move_json.get(self.name, {})
+        return move_data.get(constants.TYPE, "Normal")

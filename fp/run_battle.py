@@ -13,6 +13,7 @@ from fp.battle import LastUsedMove, Pokemon, Battle
 from fp.battle_modifier import async_update_battle, process_battle_updates
 from fp.helpers import normalize_name
 from fp.search.main import find_best_move
+from fp.llm_battle import async_pick_move_with_llm
 
 from fp.websocket_client import PSWebsocketClient
 
@@ -79,6 +80,15 @@ def extract_battle_factory_tier_from_msg(msg):
 
 
 async def async_pick_move(battle):
+    # Check if LLM is enabled in config
+    if FoulPlayConfig.use_llm:
+        return await async_pick_move_with_llm(
+            battle,
+            use_llm=True,
+            llm_probability=FoulPlayConfig.llm_probability
+        )
+    
+    # Original MCTS-only path
     battle_copy = deepcopy(battle)
     if not battle_copy.team_preview:
         battle_copy.user.update_from_request_json(battle_copy.request_json)

@@ -2,19 +2,21 @@ FROM rust:1.89-slim AS build
 
 RUN apt update && apt install -y python3.13 make build-essential python3.13-venv
 
-COPY requirements.txt requirements.txt
+COPY pyproject.toml pyproject.toml
 
-# Replace the poke-engine version in requirements.txt
-# Matches and replaces `poke-engine/` followed by any non-space characters
 ARG GEN
-RUN if [ -n "$GEN" ]; then sed -i "s/poke-engine\/[^ ]*/poke-engine\/${GEN}/" requirements.txt; fi
 
 RUN mkdir ./packages && \
     python3.13 -m venv venv && \
     . venv/bin/activate && \
     # pip24 is required for --config-settings
     pip install --upgrade pip==24.2 && \
-    pip install -v --target ./packages -r requirements.txt
+    pip install -v --target ./packages requests==2.32.4 websockets==14.1 python-dateutil==2.8.0 && \
+    if [ -n "$GEN" ]; then \
+        pip install -v --target ./packages poke-engine==0.0.46 --config-settings="build-args=--features poke-engine/${GEN} --no-default-features"; \
+    else \
+        pip install -v --target ./packages poke-engine==0.0.46 --config-settings="build-args=--features poke-engine/terastallization --no-default-features"; \
+    fi
 
 FROM python:3.13-slim
 
